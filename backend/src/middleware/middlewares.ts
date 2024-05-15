@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { IJwtokenProvider } from "../providers/IJwtokenProvider";
-import { GetByIdUserUseCase } from "../useCases/GetByIdUser/GetByIdUserUseCases";
-import { User } from "../entities/User";
+import { NextFunction, Request, Response } from "express"
+import { IJwtokenProvider } from "../providers/IJwtokenProvider"
+import { GetByIdUserUseCase } from "../useCases/GetByIdUser/GetByIdUserUseCases"
+import { User } from "../entities/User"
 
 declare global {
     namespace Express {
@@ -30,6 +30,7 @@ export class AuthMiddleware {
             if (!tokenPayload.id) throw new Error('Unexpected error.')
 
             const user = await this.getByIdUserUseCase.execute(tokenPayload.id);
+            
             request.user = user
             
             next()

@@ -23,19 +23,9 @@ export class DatabaseUsersRepository implements IUsersrepository {
                 name: user.name,
                 bio: '',
                 img: '',
+                backgroundimg: '',
             }
         })
-    }
-
-    async login(user: ILoginUserRequestDTO) {
-        const findUser =  await this.prisma.user.findFirstOrThrow({
-            where: {
-                email: user.email,
-                password: user.password
-            }
-        })
-
-        return findUser 
     }
 
     async update(user: IUpdateUserRequestDTO) {
@@ -50,18 +40,57 @@ export class DatabaseUsersRepository implements IUsersrepository {
                 name: user.name,
                 bio: user.bio,
                 img: user.img,
+                backgroundimg: user.backgroundImg,
             }
         })
     }
 
+    async getUsers(ids: []) {
+        const users = await this.prisma.user.findMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            },
+            include: {
+                followedBy: {
+                    include: {
+                        following: true
+                    }
+                },
+                following: {
+                    include: {
+                        followedBy: true
+                    }
+                },
+                like: true,
+              },
+        })
+        return users
+    } 
+
     async getById(id: number) {
         const user = await this.prisma.user.findFirst({
-            where: {
-                id,
-            }
-        })
-
-        return user
+          where: {
+            id,
+          },
+          include: {
+            followedBy: {
+                include: {
+                    following: true
+                }
+            },
+            following: {
+                include: {
+                    followedBy: true
+                }
+            },
+            like: true,
+            posts: true
+          },
+        });
+    
+        return user as User | null
     }
 
     async delete(id: number) {
@@ -82,5 +111,20 @@ export class DatabaseUsersRepository implements IUsersrepository {
                 }
             }
         })
+    }
+
+    async getUsersWithFollowers() {
+        const users = await this.prisma.user.findMany({
+            select: {
+              id: true,
+              name: true,
+              followedBy: {
+                select: {
+                  userId: true,
+                },
+              },
+            },
+        })    
+        return users
     }   
 }

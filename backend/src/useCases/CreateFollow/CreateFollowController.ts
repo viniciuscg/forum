@@ -11,7 +11,7 @@ export class CreateFollowController {
         const { followedId } = request.body
 
         try {
-            await this.createFollowUseCase.execute({id: Number(id), followedId})
+            await this.createFollowUseCase.execute({userId: followedId, followedById: Number(id)})
             return response.status(201).send()
         } catch (error: any) {
             return response.status(400).json({

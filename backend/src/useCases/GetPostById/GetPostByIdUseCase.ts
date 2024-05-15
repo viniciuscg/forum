@@ -8,6 +8,10 @@ export class GetPostByIdUseCase {
   async execute(id: number) {
     if (!id) throw new Error('Invalid post')
     
-    return await this.databasePostRepository.getById(id)
+    const findPosts = await this.databasePostRepository.getById(id)
+
+    if (!findPosts) throw new Error("Post not found");
+    
+    return findPosts
   }
 }

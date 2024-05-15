@@ -8,32 +8,35 @@ datasource db {
 }
 
 model User {
-  id                              Int      @id @default(autoincrement())
-  email                           String   @unique
-  name                            String
-  password                        String
-  bio                             String?
-  img                             String?
-  followed                        Follow[] @relation("followed")
-  Follow_Follow_followingIDToUser Follow[] @relation("Follow_followingIDToUser")
-  posts                           Post[]
-  like                            Like[]   @relation("LikeToUser")
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  name          String
+  password      String
+  bio           String?
+  img           String?
+  backgroundimg String?
+  following     Follows[] @relation("following")
+  followedBy    Follows[] @relation("followedBy")
+  posts         Post[]
+  like          Like[]    @relation("LikeToUser")
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  title       String
-  content     String
-  authorId    Int
-  parentId    Int?
-  createDate  DateTime
-  img         String?
-  post_status Boolean
-  updatedDate DateTime?
-  like        Like[]
-  author      User      @relation(fields: [authorId], references: [id])
-  parent      Post?     @relation("PostToPost", fields: [parentId], references: [id])
-  comments    Post[]    @relation("PostToPost")
+  id           Int       @id @default(autoincrement())
+  title        String
+  content      String
+  authorId     Int
+  parentId     Int?
+  createDate   DateTime
+  img          String?
+  post_status  Boolean
+  updatedDate  DateTime?
+  comments_qtd Int?
+  likes_qtd    Int?
+  like         Like[]
+  author       User      @relation(fields: [authorId], references: [id])
+  parent       Post?     @relation("PostToPost", fields: [parentId], references: [id])
+  comments     Post[]    @relation("PostToPost")
 }
 
 model Like {
@@ -42,12 +45,15 @@ model Like {
   postId Int
   post   Post   @relation(fields: [postId], references: [id])
   user   User[] @relation("LikeToUser")
+
+  @@unique([userId, postId])
 }
 
-model Follow {
-  id                            Int  @id @default(autoincrement())
-  followedID                   Int
-  followerID                    Int
-  follower                      User @relation("followed", fields: [followerID], references: [id])
-  User_Follow_followingIDToUser User @relation("Follow_followingIDToUser", fields: [followedID], references: [id])
+model Follows {
+  followedById Int
+  userId       Int
+  following    User @relation("following", fields: [followedById], references: [id])
+  followedBy   User @relation("followedBy", fields: [userId], references: [id])
+
+  @@id([userId, followedById])
 }

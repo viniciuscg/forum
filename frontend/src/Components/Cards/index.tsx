@@ -5,11 +5,12 @@ interface ICardProps {
 }
 
 function Cards(props: ICardProps) {
-    return(
-      <div>
-        {props.content} 
-      </div>
-    )
+
+  return(
+    <div>
+      {props.content} 
+    </div>
+  )
 }
 
 export default Cards

@@ -1,46 +1,40 @@
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../Context/userContext";
-import PostPrompt from "../postPrompt";
-import { FaRegComment, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { IPost } from "../../Services/Post/IPost";
+import moment from "moment";
+import { LikeServices } from "../../Services/Like/likeServices";
 
 interface IProps {
-  posts: IPost;
+  posts: IPost
 }
 
 const Comments = (props: IProps) => {
-  const [likes, setLikes] = useState<number>(0)
-  const [comment, setComment] = useState<number>(0)
+  const [isLiked, setIsLiked] = useState<boolean>(false)
   const { isUserLogged } = useUserContext()
-  
-  const count = () => {
-    const likesQtd = new Set(props.posts.likes)
-    const commentQtd = new Set(props.posts.comments)
 
-    const totalComment = commentQtd.size
-    const totalLikesQtd = likesQtd.size
-    
-    setLikes(totalLikesQtd)
-    setComment(totalComment)
+  const alreadyLiked = async () => {
+    const liked = await LikeServices.get(props.posts.id)
+    setIsLiked(liked)
   }
 
   useEffect(() => {
+    alreadyLiked()
   },[])
 
   return (
     <div>
-      {isUserLogged &&
-       <PostPrompt/>
-      }
       <div className="flex gap-2 hover:bg-gray-800 rounded-lg cursor-pointer">
         <img
           className="rounded-full w-8 h-8"
-          src={props.posts.author?.img}
-          alt=""
+          src={props.posts.author.img}
         />
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between">
-          <h1>{props.posts.author?.name}</h1>
+        <div className="flex flex-grow flex-col gap-2">
+          <div className="flex flex-grow-1 justify-between">
+            <div className="flex gap-2">
+              <h1>{props.posts.author.name}</h1>
+              <span className="font-extralight">{moment(props.posts.createDate).format("MMM Do YY")}</span>
+            </div>
             {isUserLogged && (
               <button
                 className="bg-white text-gray-900 active:bg-gray-900 font-bold uppercase 
@@ -58,18 +52,21 @@ const Comments = (props: IProps) => {
             <img
               className="rounded-lg"
               src={props.posts.img}
-              alt="dasdasdas"
             />
           </div>
 
           <div className="flex gap-5">
             <div className='flex items-center gap-2'>
-              <FaRegHeart/>
-              {likes}
+              {isLiked ?
+                <FaHeart className="text-red-600"/>
+                :
+                <FaRegHeart/>
+              }
+              {props.posts.likes_qtd}
             </div>
             <div className='flex items-center gap-2'>
               <FaRegComment/>
-              {comment}
+              {props.posts.comments_qtd}
             </div>
           </div>
         </div>
@@ -78,4 +75,4 @@ const Comments = (props: IProps) => {
   )
 }
 
-export default Comments;
+export default Comments

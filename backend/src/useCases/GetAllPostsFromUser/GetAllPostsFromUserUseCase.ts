@@ -8,6 +8,6 @@ export class GetAllPostsFromUserUseCase {
     async execute(data: IGetAllPostsFromUserDTO) {
         if(!data) throw new Error("Invalid User")
         
-        await this.databasePostRepository.getAllByUser(data)
+        return await this.databasePostRepository.getAllByUser(data)
     }
 }

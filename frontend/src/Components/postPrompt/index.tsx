@@ -1,44 +1,67 @@
 import { ChangeEvent, useState, FormEvent } from 'react';
 import { FaImage, FaTrash } from 'react-icons/fa';
+import { PostServices } from '../../Services/Post/postServices';
+import { useUserContext } from '../../Context/userContext';
 
-const PostPrompt = () => {
-  const [title, setTitle] = useState<string>('');
-  const [cotent, setCotent] = useState<string>('');
-  const [image, setImage] = useState<string>('');
-  const [counter, setCounter] = useState<number>(280);
+interface IProps {
+  parentId?: number
+}
+
+const PostPrompt = (props: IProps) => {
+  const [title, setTitle] = useState<string>('')
+  const [content, setContent] = useState<string>('')
+  const [image, setImage] = useState<string>('')
+  const [counter, setCounter] = useState<number>(280)
+
+  const { user } = useUserContext()
 
   const handleTweetChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setCotent(e.target.value);
-    setCounter(280 - e.target.value.length);
-  };
+    setContent(e.target.value)
+    setCounter(280 - e.target.value.length)
+  }
 
   const uploadImage = async (e: any) => {
-    const file = e.target.files[0];
-    const base64 = await convertBase64(file);
-    setImage(base64 as string);
-  };
+    const file = e.target.files[0]
+    const base64 = await convertBase64(file)
+    setImage(base64 as string)
+  }
 
   const convertBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
+      const fileReader = new FileReader()
+      fileReader.readAsDataURL(file)
 
       fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
+        resolve(fileReader.result)
+      }
 
       fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+        reject(error)
+      }
+    })
+  }
 
   const clearImg = () => {
     setImage('')
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-  };
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const token = localStorage.getItem("token")
+    if (token ) {
+      await PostServices.create({
+        content,
+        img: image,
+        title,
+        authorId: user!.id,
+        parentId: props.parentId ? props.parentId : null
+      })
+    }
+
+    setContent("")
+    setTitle("")
+    setImage("")
+  }
 
   return (
     <div>
@@ -62,7 +85,7 @@ const PostPrompt = () => {
                 text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                 rows={4}
                 placeholder="What's happening?"
-                value={cotent}
+                value={content}
                 onChange={handleTweetChange}
               />
             </div>
@@ -102,4 +125,4 @@ const PostPrompt = () => {
   )
 }
 
-export default PostPrompt;
+export default PostPrompt

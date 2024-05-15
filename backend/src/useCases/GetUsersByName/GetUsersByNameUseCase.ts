@@ -7,6 +7,15 @@ export class GetUsersByNameUseCase {
 
     execute = async (name: string) => {
         if(!name) throw new Error('User is invalid')
-        await this.databaseUserRepository.getUsersByName(name)
+            
+        const findUsers = await this.databaseUserRepository.getUsersByName(name)
+
+        if (!findUsers) throw new Error("Cannot find any users")
+        
+        const users = findUsers.map(user => 
+            user.password = ""
+        )
+
+        return users
     }
 }

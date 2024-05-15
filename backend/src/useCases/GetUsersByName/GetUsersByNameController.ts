@@ -7,11 +7,11 @@ export class GetUsersByNameController {
     ) {}
 
     execute = async (request: Request, response: Response) => {
-        const { name } = request.body
+        const { name } = request.params
 
         try {
             const users = await this.getUsersByNameUseCase.execute(name)
-            return response.status(200).send(name)
+            return response.status(200).send(users)
         } catch (error: any) {
             return response.status(400).json({
                 message: error.message || 'Unexpected error.'

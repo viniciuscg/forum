@@ -7,14 +7,16 @@ export class CreatePostController {
     ) {}
 
     execute = async (request: Request, response: Response) => {
-        const { title, img, content, authorId, parentId } = request.body
+        const { id } = request.user!
+        
+        const { title, img, content, parentId } = request.body
         
         try {
             await this.createPostUseCase.execute({ 
                 title, 
                 img, 
                 content, 
-                authorId, 
+                authorId: Number(id), 
                 parentId,
             })
             return response.status(201).send()

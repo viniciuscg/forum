@@ -8,9 +8,10 @@ export class DeleteFollowController {
 
     execute = async (request: Request, response: Response) => {   
         const { id } = request.user!
+        const { followedId } = request.params
 
         try {
-            await this.deleteFollowUseCase.execute(id!)
+            await this.deleteFollowUseCase.execute({ userId: Number(followedId), followedById: Number(id) })
             return response.status(200).send()
         } catch (error: any) {
             return response.status(400).json({

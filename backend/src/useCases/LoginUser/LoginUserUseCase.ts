@@ -1,5 +1,6 @@
 import { IJwtokenProvider } from "../../providers/IJwtokenProvider";
 import { IUsersrepository } from "../../repositories/IUsersRepository";
+import bcrypt from 'bcrypt'
 
 export class LoginUserUseCase {
     constructor(
@@ -9,13 +10,17 @@ export class LoginUserUseCase {
 
     async execute(data: ILoginUserRequestDTO) {
         if(!data) throw new Error("Invalid fields")
-        const user = await this.databaseUserRepository.login(data)
 
-        if(user) {
-            const token = this.jwtokenProvider.createToken(user.id!)
-            return token
-        }else {
-            throw new Error('User may not exist')
-        }
+        const findUser = await this.databaseUserRepository.findByEmail(data.email)
+
+        if (!findUser) throw new Error("User cannot be find")
+        
+        const isMatch = await bcrypt.compare(data.password, findUser.password)
+        
+        if (!isMatch) throw new Error("invalid password")
+
+        const token = this.jwtokenProvider.createToken(findUser.id!)
+        
+        return token
     }
 }

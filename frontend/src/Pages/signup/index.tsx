@@ -2,7 +2,6 @@ import { useState } from "react"
 import { UserServices } from "../../Services/User/userServices"
 import { useNavigate } from "react-router-dom"
 import { RiProgress4Fill } from "react-icons/ri"
-import { useUserContext } from "../../Context/userContext"
 
 function Signup() {
   const [ email, setEmail ] = useState<string>('')
@@ -10,7 +9,6 @@ function Signup() {
   const [ password, setPassword ] = useState<string>('')
   const [req, setReq] = useState(false)
   const navigate = useNavigate()
-  const { loggedUser } = useUserContext()
 
   const singUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -22,7 +20,6 @@ function Signup() {
     })
     setReq(false)
     navigate('/sign-in')
-    loggedUser
   }
 
   return (

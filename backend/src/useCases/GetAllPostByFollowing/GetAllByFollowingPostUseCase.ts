@@ -9,9 +9,9 @@ export class GetAllPostByFollowingUseCase {
     ) {}
 
     async execute(data: IGetAllPostsByFollowingCaseDTO) {
-        const followedsIDS = await this.databaseFollowRepository.getAllFollowing(data.id)
-        const followedID = followedsIDS.map(follow => follow.followedID )
+        const followedsIDS = await this.databaseFollowRepository.getAllFollows(data.id)
+        const followedID = followedsIDS.map(follow => follow.userId )
 
-        return await this.databasePostRepository.getByUsers({page: data.page, ids: followedID})
+        return await this.databasePostRepository.getByUsers({ids: followedID})
     }
 }

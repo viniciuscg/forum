@@ -15,7 +15,7 @@ export class UpdatePostController {
                 id: Number(id),
                 title,
                 img,
-                content
+                content,
             })
             return response.status(204).send()
         } catch (error: any) {

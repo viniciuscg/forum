@@ -23,32 +23,64 @@ const cards = [
 function Home() {
   const [posts, setPosts] = useState<IPost[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [allPostsIsSelected, setAllPostsIsSelected] = useState<boolean>(false)
+  const [followingPostsIsSelected, setFollowingPostsIsSelected] = useState<boolean>(false)
   const { isUserLogged, loggedUser } = useUserContext()
 
-  const searchMore = async (currentPage: number) => {
-    const newData = await PostServices.getAll(currentPage + 1);
-    setIsLoading(false)
-  }
 
-  const getAllPosts = async (page: number) => {
-    const data = await PostServices.getAll(page)
+  const getAllPosts = async () => {
+    const data = await PostServices.getAll()
     setPosts(data)
     setIsLoading(false)
+    setAllPostsIsSelected(true)
+    setFollowingPostsIsSelected(false)
+    loggedUser()
+  }
+
+  const getPostsByFollowing = async () => {
+    const data = await PostServices.getPostsByFollowing()
+    setPosts(data)
+    setIsLoading(false)
+    setAllPostsIsSelected(false)
+    setFollowingPostsIsSelected(true)
+    loggedUser()
   }
 
   useEffect(() => {
-    setCurrentPage(1)
-    getAllPosts(currentPage)
-    loggedUser()
+    getAllPosts()
   },[])
 
     return(
       <div className="flex justify-center gap-10 text-white">
         <UserBar />
-        <div className="flex flex-col gap-8 max-w-[600px]">
+        <div className="flex flex-col gap-8 max-w-[700px] min-w-[600px]">
           {isUserLogged &&
             <PostPrompt />
+          }
+          {isUserLogged &&
+          <div className="flex justify-center gap-40">
+            <h1 
+              className={allPostsIsSelected ?
+                "transition duration-300 ease-in-out border-b border-transparent text-blue-500  hover:text-blue-500 hover:border-blue-500 hover:shadow-md hover:cursor-pointer"
+                : 
+                "transition duration-300 ease-in-out border-b border-transparent text-gray-600 hover:text-gray-600 hover:border-gray-600 hover:shadow-md hover:cursor-pointer"
+              } 
+              onClick={() => getAllPosts()}
+            >
+              all posts
+            </h1>
+            <div className="border-l h-8"/>
+            <h1 
+              className={followingPostsIsSelected ?
+                "transition duration-300 ease-in-out border-b border-transparent text-blue-500  hover:text-blue-500 hover:border-blue-500 hover:shadow-md hover:cursor-pointer"
+                : 
+                "transition duration-300 ease-in-out border-b border-transparent text-gray-600 hover:text-gray-600 hover:border-gray-600 hover:shadow-md hover:cursor-pointer"
+              } 
+              onClick={() => getPostsByFollowing()}
+            >
+              follows posts
+            </h1>
+          </div>
           }
           {isLoading ?
             <NoData/>
@@ -57,7 +89,7 @@ function Home() {
               <Link to={`/details/${post.id}`}><Posts posts={post}/></Link> 
             )
           }
-          <div onClick={() => searchMore(currentPage)} className="cursor-pointer flex justify-center border-t-[0.5px] hover:bg-gray-800 p-2">
+          <div className="cursor-pointer flex justify-center border-t-[0.5px] hover:bg-gray-800 p-2">
             <h1>Show more..</h1>
           </div>
         </div>

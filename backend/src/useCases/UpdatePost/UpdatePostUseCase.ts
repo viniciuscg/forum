@@ -1,3 +1,4 @@
+import { Post } from "../../entities/Post";
 import { IPostRepository } from "../../repositories/IPostRepository";
 
 export class UpdatePostUseCase {
@@ -7,6 +8,7 @@ export class UpdatePostUseCase {
 
     async execute(data: IUpdatePostDTO) {
         if(!data) throw new Error("Invalid fields")
+        
         await this.databasePostsRepository.update(data)
     }
 }

@@ -5,4 +5,5 @@ interface IUpdateUserRequestDTO {
     name: string,
     bio: string,
     img: string,
+    backgroundImg: string,
 }

@@ -30,7 +30,7 @@ function App() {
       element: <Login/>
     },
     {
-      path: "/profile",
+      path: "/profile/:id",
       element: <Profile />
     },
     {
@@ -41,7 +41,7 @@ function App() {
       path: "/details/:postId",
       element: <PostDetails />
     },
-  ]);
+  ])
 
   return (
     <div className='min-h-screen bg-gray-900'>

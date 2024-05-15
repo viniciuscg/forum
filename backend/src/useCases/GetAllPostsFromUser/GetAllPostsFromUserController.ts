@@ -8,13 +8,12 @@ export class GetAllPostsFromUserController {
 
     execute = async (request: Request, response: Response) => {
         const { userId } = request.params
-        const { page } = request.body
 
         try {
-            await this.getAllPostsFromUserUseCase.execute({
+            const posts = await this.getAllPostsFromUserUseCase.execute({
                 id: Number(userId),
-                page,
             })
+            return response.status(200).send(posts)
         } catch (error: any) {
             return response.status(400).json({
                 message: error.message || 'Unexpected error.'

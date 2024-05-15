@@ -1,7 +1,7 @@
 export interface ICreatePostDTO {
-    title: string 
-    img?: string | undefined
-    content: string 
-    authorId: number 
-    parentId?: number
+  title: string, 
+  img: string, 
+  content: string, 
+  authorId: number, 
+  parentId: number,
 }

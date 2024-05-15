@@ -8,10 +8,8 @@ export class GetAllPostByFollowingController {
 
     execute = async (request: Request, response: Response) => {
         const { id } = request.user!
-        const { page } = request.body
-
         try {
-            const posts = await this.getAllPostByFollowingUseCase.execute({id: Number(id), page})
+            const posts = await this.getAllPostByFollowingUseCase.execute({id: Number(id)})
             return response.status(200).send(posts)
         } catch (error: any) {
             return response.status(400).json({

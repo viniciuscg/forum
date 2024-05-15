@@ -9,7 +9,7 @@ function Login() {
   const [req, setReq] = useState(false)
   const navigate = useNavigate()
 
-  const singUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setReq(true)
     UserServices.login({
@@ -22,7 +22,7 @@ function Login() {
 
   return (
     <div className="min-h-screen text-white flex items-center justify-center">
-      <form onSubmit={singUp} className="bg-transparent text-center p-8 rounded shadow-slate-950 shadow-lg w-96">
+      <form onSubmit={signIn} className="bg-transparent text-center p-8 rounded shadow-slate-950 shadow-lg w-96">
         <h2 className="text-2xl font-semibold mb-4">Sign-in</h2>
         <input
           type="email"

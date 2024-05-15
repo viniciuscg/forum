@@ -12,10 +12,8 @@ export interface IGetAllPostsByFollowingDTO {
 
 export interface IGetAllPostsByFollowingCaseDTO {
     id: number
-    page: number
 }
 
 export interface IGetAllPostsByFollowingDataDTO {
     ids: number[] 
-    page: number
 }

@@ -7,10 +7,9 @@ export class GetAllPostController {
     ) {}
 
     execute = async (request: Request, response: Response) => {
-      const { page } = request.query
 
       try {
-          const posts = await this.getAllPostUseCase.execute(Number(page))
+          const posts = await this.getAllPostUseCase.execute()
           return response.status(200).json(posts)
       } catch (error: any) {
           return response.status(400).json({

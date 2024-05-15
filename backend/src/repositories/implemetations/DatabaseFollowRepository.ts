@@ -1,35 +1,51 @@
 import { PrismaClient } from "@prisma/client";
 import { IFollowRepository } from "../IFollowRepository";
-import { ICreateFollowDTO } from "../../useCases/CreateFollow/CreateFollowDTO";
+import { Follow } from "../../entities/Follow";
 
 export class DatabaseFollowRepository implements IFollowRepository {
     private prisma = new PrismaClient()
-    
-    async getAllFollowing(id: number) {
-        return await this.prisma.follow.findMany({
-            where: {
-                followerID: id
-            },
-            select: {
-                followedID: true
-            }
-        })
-    }
 
-    async create(data: ICreateFollowDTO){
-        await this.prisma.follow.create({
+    async create(data: Follow){
+        const { followedById, userId } = data
+        await this.prisma.follows.create({
             data: {
-                followedID: data.followedId,
-                followerID: data.id
+                followedById: followedById,
+                userId: userId,
             }
         })
     }
 
-    async delete(id: number) {
-        await this.prisma.follow.delete({
+    async isFollowing(data: Follow) {
+        const follow = await this.prisma.follows.findFirstOrThrow({
             where: {
-                id,
+                followedById: data.followedById,
+                userId: data.userId,
+            },
+        });
+
+        return follow as unknown as Promise<Follow>;
+    }
+
+    async delete(data: Follow) {
+        await this.prisma.follows.delete({
+            where: {
+                userId_followedById: {
+                    followedById: data.followedById,
+                    userId: data.userId,
+                }
             }
         })
     }
+
+    async getAllFollows(id: number) {
+        const follows = await this.prisma.follows.findMany({
+            where: {
+                followedById: id
+            }
+        })
+
+        return follows
+    }
+
+
 }

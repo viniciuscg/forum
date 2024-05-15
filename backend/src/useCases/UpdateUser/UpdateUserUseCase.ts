@@ -7,6 +7,7 @@ export class UpdateUserUseCase {
 
     async execute(data: IUpdateUserRequestDTO) {
         if(!data) throw new Error("Invalid fields")
+
         await this.databaseUserRepository.update(data)
     }
 }

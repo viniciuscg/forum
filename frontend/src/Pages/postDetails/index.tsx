@@ -10,6 +10,8 @@ import { useEffect, useState } from "react"
 import { PostServices } from "../../Services/Post/postServices"
 import { FaArrowLeft } from "react-icons/fa"
 import NoData from "../../Components/noData"
+import { useUserContext } from "../../Context/userContext"
+import PostPrompt from "../../Components/postPrompt"
 
 const cards = [
   {
@@ -24,12 +26,16 @@ function PostDetails() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [post, setPost] = useState<IPost | undefined>()
   const { postId } = useParams()
+  const { loggedUser, isUserLogged } = useUserContext()
+
+  
 
   const getPostById = async () => {
-    const data = await PostServices.getById(Number(postId));
-    setPost(data);
+    const data = await PostServices.getById(Number(postId))
+    setPost(data)
     setIsLoading(false)
-  };
+    loggedUser()
+  }
   
   useEffect(() => {
     getPostById()
@@ -50,20 +56,33 @@ function PostDetails() {
           {isLoading ?
           <NoData/>
           :
-          post &&
-            <Posts posts={post} />
+            post &&
+            <>
+              {post.parent && 
+              <div className="relative">
+                <Posts posts={post.parent} />
+                <div className="border-l h-[150px] absolute top-10 left-6 transform -translate-x-1/2 -translate-y-0"></div>
+              </div>
+              }
+              <Posts posts={post} />
+            </>
           }
-            <hr />
-          <h1>Comments:</h1>
-          {isLoading ?
-            <NoData/>
-          :
-            post?.comments?.map(post => 
-              <div className="flex flex-col gap-5">
-                <Link to={`/details/${post.id}`}><Comments posts={post} /></Link>
-                <hr />
-              </div> 
-          )}
+          <hr />
+          <div className="flex flex-col gap-10 p-5">
+            <h1>Comments:</h1>
+            {isUserLogged &&
+              <PostPrompt parentId={post?.id}/>
+            }
+            {isLoading ?
+              <NoData/>
+            :
+              post?.comments?.map(post => 
+                <div className="flex flex-col gap-5">
+                  <Link to={`/details/${post.id}`}><Comments posts={post} /></Link>
+                  <hr />
+                </div> 
+            )}
+          </div>
         </div>
         <div className="flex flex-col p-10 gap-10">
         {cards.map(card => 

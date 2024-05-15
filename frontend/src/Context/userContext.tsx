@@ -1,11 +1,14 @@
-import { ReactElement, createContext, useContext, useEffect, useState } from 'react'
+import { ReactElement, createContext, useContext, useState } from 'react'
 import { UserServices } from '../Services/User/userServices'
 import { IUser } from '../Services/User/IUser'
+import { FollowServices } from '../Services/Follow/followServices'
 
 interface IUserContextProps {
   loggedUser: () => Promise<void>
+  isFollowingVerify: (followedId: number) => Promise<void>
   user: IUser | undefined
   isUserLogged: boolean
+  isFollowing: boolean
 }
 
 interface IProps {
@@ -17,23 +20,28 @@ export const UserContext = createContext({} as IUserContextProps)
 export const UserProvider = ({ children }: IProps) => {
   const [user, setUser] = useState<IUser>()
   const [isUserLogged, setIsUserLogged] = useState<boolean>(false)
+  const [isFollowing, setIsFollowing] = useState<boolean>(false)
 
   const loggedUser = async () => {
     const token = localStorage.getItem('token')
     const response = await UserServices.authUser(token)
-    setUser(response)
+    const user = await UserServices.getById(response.id)
+    setUser(user)
     setIsUserLogged(true)
   }
 
-  useEffect(() => {
-    loggedUser()
-  },[])
+  const isFollowingVerify = async (userId: number) => {
+    const response = await FollowServices.isFollowing(userId)
+    setIsFollowing(response)
+  }
 
   return (
     <UserContext.Provider value={{
       loggedUser,
       user,
-      isUserLogged
+      isUserLogged,
+      isFollowingVerify,
+      isFollowing,
     }}>
       {children}
     </UserContext.Provider>

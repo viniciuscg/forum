@@ -1,11 +1,13 @@
-import { ICreateFollowDTO } from "../useCases/CreateFollow/CreateFollowDTO"
+import { Follow } from "../entities/Follow"
 
 export interface IGetAllByFollowingDTO {
-    followedID: number
+    followedById: number
 }
 
 export interface IFollowRepository {
-    create(data: ICreateFollowDTO): Promise<void>
-    delete(id: number): Promise<void>
-    getAllFollowing(id: number): Promise<IGetAllByFollowingDTO[]>
+    create(data: Follow): Promise<void>
+    delete(data: Follow): Promise<void>
+    isFollowing(data: Follow): Promise<Follow>
+    getAllFollows(id: number): Promise<Follow[]>
+
 }

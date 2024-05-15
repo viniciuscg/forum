@@ -7,12 +7,11 @@ export class CreateLikeController {
     ) {}
 
     execute = async (request: Request, response: Response) => {
-        const { id } = request.user!
-        const { postId } = request.body
+        const { postId, userId } = request.body
     
         try {
-            await this.createLikeUseCase.execute({id: Number(id), postId})
-            
+            await this.createLikeUseCase.execute({postId, userId})
+            return response.status(200).send()
         } catch (error: any) {
             return response.status(400).json({
                 message: error.message || 'Unexpected error.'

@@ -1,3 +1,4 @@
+import { Follow } from "../../entities/Follow";
 import { IFollowRepository } from "../../repositories/IFollowRepository";
 
 export class DeleteFollowUseCase {
@@ -5,9 +6,9 @@ export class DeleteFollowUseCase {
         private databaseFollowRepository: IFollowRepository
     ) {}
 
-    async execute(id: number){
-        if(!id) throw new Error('User is invalid')
+    async execute(data: Follow){
+        if(!data) throw new Error('User is invalid')
 
-        await this.databaseFollowRepository.delete(id)
+        await this.databaseFollowRepository.delete(data)
     }
 }
